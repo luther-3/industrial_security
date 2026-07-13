@@ -296,18 +296,14 @@ ALARM_VOLUME = 0.8                   # 音量 (0.0 - 1.0)
 HOST = "0.0.0.0"
 PORT = 8000
 
-# 检测类别映射（队友交付的装备级检测框）
-# 实际模型输出 4 个装备类，同一人可能产生多个框
-# 统计时需配合姿态模型的人体框做 IoU 去重（见 PRD.md §F2 统计去重规则）
+# 检测类别映射（队友交付的人体级互斥组合框，每人一个框）
+# 4 个类别互斥，一个框 = 一个人，无需去重
 CLASS_NAMES = {
-    0: "helmet",
-    1: "no-helmet",
-    2: "vest",
-    3: "no-vest",
+    0: "person_helmet_vest",
+    1: "person_helmet_no_vest",
+    2: "person_no_helmet_vest",
+    3: "person_no_helmet_no_vest",
 }
-
-# IoU 匹配阈值
-IOU_MATCH_THRESHOLD = 0.3   # 装备框与人体框 IoU > 此值视为同一人
 ```
 
 ### 4.2 engine/capture.py
@@ -352,7 +348,7 @@ class SafetyGearDetector:
 class Detection:
     """单个检测结果"""
     bbox: tuple[int, int, int, int]   # (x1, y1, x2, y2)
-    class_name: str                    # "helmet" | "no-helmet" | "vest" | "no-vest"（装备框）
+    class_name: str                    # "person_helmet_vest" | "person_helmet_no_vest" | "person_no_helmet_vest" | "person_no_helmet_no_vest"
     confidence: float
 ```
 

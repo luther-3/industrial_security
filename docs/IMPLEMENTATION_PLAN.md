@@ -388,8 +388,8 @@ export default defineConfig({
 将占位模型替换为队友训练的 `helmet_vest.pt`。
 
 ### 前提条件
-- 队友交付 `helmet_vest.pt`，模型输出装备级检测框（4 类：`helmet`, `no-helmet`, `vest`, `no-vest`）
-- 同一人可能产生多个装备框，软件端需实现装备框→人体框 IoU 匹配去重（见 PRD.md §F2 统计去重规则）
+- 队友交付 `helmet_vest.pt`，模型输出人体级互斥组合框（4 类：`person_helmet_vest`, `person_helmet_no_vest`, `person_no_helmet_vest`, `person_no_helmet_no_vest`）
+- 每个框 = 一个人，框与人 1:1 对应，无需去重
 
 ### 步骤
 
@@ -400,20 +400,17 @@ export default defineConfig({
 - 将 `DETECTION_MODEL_PATH` 指向队友模型
 - 移除 fallback 逻辑（或保留作为不存在时的降级）
 
-#### 8.3 实现统计去重逻辑
-- 新增 `engine/matching.py`：装备框 → 姿态模型人体框 IoU 匹配
-- 每个 no-helmet/no-vest 装备框匹配到最近的人体框（IoU > 0.3），同一人体框只计一次
-- 总人数由姿态模型的人体框数量确定
+#### 8.3 更新 draw.py
+- CLASS_NAMES 映射颜色：两项合规→绿色 / 一项违规→橙色 / 两项违规→红色（见 FRONTEND_GUIDELINES.md §2.4）
+- 显示标签：OK / NO-HELMET / NO-VEST / NO-HELMET+NO-VEST
 
-#### 8.4 更新 draw.py
-- CLASS_NAMES 映射：`helmet`→绿色/`no-helmet`→红色/`vest`→绿色/`no-vest`→红色
-- 显示标签：HELMET / NO-HELMET / VEST / NO-VEST
-
-#### 8.5 验证
+#### 8.4 验证
 - 运行系统，确认：
-  - 一人同时戴安全帽+穿反光衣 → 2 个绿色框，总人数=1（不重复计数）
-  - 一人戴安全帽+未穿反光衣 → 绿框 HELMET + 红框 NO-VEST，未穿反光衣人数=1
-  - 同一人两个装备框匹配到同一个 pose 人体框，未违规计数不重复
+  - 戴帽+穿衣 → 绿色框 "OK"
+  - 戴帽+没穿衣 → 橙色框 "NO-VEST"，未穿反光衣人数+1
+  - 没戴帽+穿衣 → 橙色框 "NO-HELMET"，未戴安全帽人数+1
+  - 没戴帽+没穿衣 → 红色框 "NO-HELMET+NO-VEST"，两项违规人数各+1
+  - 检测框数 = 人数，不需要额外去重
 
 ### 产出物
 - [ ] models/helmet_vest.pt（队友交付）

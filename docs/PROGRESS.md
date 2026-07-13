@@ -155,7 +155,35 @@
 | 检测框颜色表 | FRONTEND_GUIDELINES.md | 改回装备级类别名 |
 | 阶段8 模型前提条件 | IMPLEMENTATION_PLAN.md | 改为实际装备框交付物，新增 matching.py 去重模块 |
 | 阶段8 验证项缺少去重测试 | IMPLEMENTATION_PLAN.md | 新增组合场景验证（一人多框→不重复计数） |
-| 流程中残余类别名 | APP_FLOW.md | "no-helmet 装备框"/"no-helmet 检测框" |
+| 流程中残余类别名 | APP_FLOW.md | 同步类别名 |
+
+#### 接下来做什么
+- 阶段 1: 环境搭建
+
+---
+
+### 2026-07-13 — 规范文档 v2.0 — 模型输出契约最终确定
+
+#### 来源
+与队友确认标注方案：按人标注，人体级互斥组合框。
+
+#### 最终模型输出
+4 个互斥类，每人一个框，框与人 1:1：
+- `person_helmet_vest` — 戴帽+穿衣（两项合规 → 绿色框）
+- `person_helmet_no_vest` — 戴帽+没穿衣（一项违规 → 橙色框）
+- `person_no_helmet_vest` — 没戴帽+穿衣（一项违规 → 橙色框）
+- `person_no_helmet_no_vest` — 没戴帽+没穿衣（两项违规 → 红色框）
+
+#### 对软件端的影响（简化）
+- ~~`engine/matching.py`~~ — 不需要，删除
+- 统计逻辑：总人数 = 框数，违规人数 = 按类别直接加
+- 无 IoU 匹配、无去重、无 NMS 聚类
+
+#### 文档变更
+- PRD.md F2: 模型契约和统计规则重写
+- BACKEND_STRUCTURE.md: CLASS_NAMES 重写，移除 IOU_MATCH_THRESHOLD
+- FRONTEND_GUIDELINES.md: 检测框颜色增加橙色（一项违规），更新 4 类标签
+- IMPLEMENTATION_PLAN.md: 移除 matching.py，更新阶段 8 验证项
 
 #### 接下来做什么
 - 阶段 1: 环境搭建

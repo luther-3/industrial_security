@@ -34,28 +34,29 @@
 - PC 端通过 OpenCV `cv2.VideoCapture(MJPEG_URL)` 拉流
 
 #### F2: 安全装备检测
-- 使用队友训练的 YOLO 模型（`helmet_vest.pt`）检测画面中的安全装备，模型输出**装备级检测框**（4 类）：
-  - `helmet` — 安全帽
-  - `no-helmet` — 未佩戴安全帽的头部
-  - `vest` — 反光衣
-  - `no-vest` — 未穿反光衣的躯干
+- 使用队友训练的 YOLO 模型（`helmet_vest.pt`）检测画面中的**人体**，模型输出**互斥组合类**（4 类，每人一个框）：
+  - `person_helmet_vest` — 戴了安全帽 + 穿了反光衣
+  - `person_helmet_no_vest` — 戴了安全帽 + 未穿反光衣
+  - `person_no_helmet_vest` — 未戴安全帽 + 穿了反光衣
+  - `person_no_helmet_no_vest` — 未戴安全帽 + 未穿反光衣
 - 在视频画面上绘制检测边界框：
-  - 合规（helmet / vest）→ 绿色框
-  - 违规（no-helmet / no-vest）→ 红色框
+  - 两项都合规（person_helmet_vest）→ 绿色框
+  - 一项违规 → 橙色框
+  - 两项都违规（person_no_helmet_no_vest）→ 红色框
 - 在队友模型交付前，使用 YOLOv8n 官方预训练模型作为占位
 
 **模型输出契约（已与队友确认）：**
 
-队友交付装备级检测框。同一人可能产生多个框（如一人同时有 helmet 框和 vest 框）。
+模型直接输出**人体级互斥组合框**，每人一个框，框与人是 1:1 关系。
 
-**统计去重规则：**
+**统计规则（无需去重）：**
 
-| 统计项 | 数据来源 | 计算方法 |
-|--------|---------|---------|
-| 画面总人数 | YOLOv8n-pose（姿态模型）的人体检测结果 | 直接数 person bbox 数量 |
-| 未戴安全帽人数 | 装备模型 `no-helmet` 框 + 姿态模型人体框 | 每个 `no-helmet` 框与最近的人体框做 IoU 匹配，同一人体框只计数一次 |
-| 未穿反光衣人数 | 装备模型 `no-vest` 框 + 姿态模型人体框 | 每个 `no-vest` 框与最近的人体框做 IoU 匹配，同一人体框只计数一次 |
-| 摔倒状态 | YOLOv8n-pose 关键点 + 几何规则 | 见 §F3 |
+| 统计项 | 计算方法 |
+|--------|---------|
+| 画面总人数 | 所有检测框数量（每个框 = 一个人） |
+| 未戴安全帽人数 | `count(person_no_helmet_vest) + count(person_no_helmet_no_vest)` |
+| 未穿反光衣人数 | `count(person_helmet_no_vest) + count(person_no_helmet_no_vest)` |
+| 摔倒状态 | YOLOv8n-pose 关键点 + 几何规则（独立于装备检测，见 §F3） |
 
 #### F3: 人体姿态估计与摔倒检测
 - 使用 YOLOv8n-pose 官方预训练模型检测人体 17 个关键点

@@ -55,10 +55,10 @@
 
 | 内部类别名 | 边框色 (BGR for OpenCV) | 显示标签 |
 |-----------|--------------------------|---------|
-| `helmet` (安全帽) | `(103, 194, 58)` #67C23A 绿色 | HELMET |
-| `no-helmet` (未佩戴安全帽的头部) | `(108, 108, 245)` #F56C6C 红色 | NO-HELMET |
-| `vest` (反光衣) | `(103, 194, 58)` #67C23A 绿色 | VEST |
-| `no-vest` (未穿反光衣的躯干) | `(108, 108, 245)` #F56C6C 红色 | NO-VEST |
+| `person_helmet_vest` (两项都合规) | `(103, 194, 58)` #67C23A 绿色 | OK |
+| `person_helmet_no_vest` (缺反光衣) | `(230, 162, 60)` #E6A23C 橙色 | NO-VEST |
+| `person_no_helmet_vest` (缺安全帽) | `(230, 162, 60)` #E6A23C 橙色 | NO-HELMET |
+| `person_no_helmet_no_vest` (两项都违规) | `(108, 108, 245)` #F56C6C 红色 | NO-HELMET + NO-VEST |
 
 ---
 
