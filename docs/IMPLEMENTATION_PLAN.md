@@ -60,10 +60,10 @@ cd web && npm run dev   # 确认 Vite 启动成功
 ```
 
 ### 产出物
-- [x] 完整的项目目录
-- [x] requirements.txt
-- [x] 虚拟环境可用
-- [x] Vue 项目骨架可启动
+- [ ] 完整的项目目录
+- [ ] requirements.txt
+- [ ] 虚拟环境可用
+- [ ] Vue 项目骨架可启动
 
 ---
 
@@ -116,9 +116,9 @@ cv2.destroyAllWindows()
 - 运行 `python test_camera.py`，看到摄像头实时画面
 
 ### 产出物
-- [x] engine/config.py
-- [x] engine/capture.py
-- [x] test_camera.py（验证用）
+- [ ] engine/config.py
+- [ ] engine/capture.py
+- [ ] test_camera.py（验证用）
 
 ---
 
@@ -169,9 +169,9 @@ while True:
 - 检测框颜色和标签正确
 
 ### 产出物
-- [x] engine/detector.py
-- [x] engine/draw.py
-- [x] test_detector.py（验证用）
+- [ ] engine/detector.py
+- [ ] engine/draw.py
+- [ ] test_detector.py（验证用）
 
 ---
 
@@ -215,9 +215,9 @@ def is_fallen(keypoints, frame_h):
 - 模拟弯腰/躺倒 → 触发 `is_fallen = True` → 显示 "⚠ FALL"
 
 ### 产出物
-- [x] engine/pose_estimator.py
-- [x] engine/draw.py（更新）
-- [x] test_pose.py（验证用）
+- [ ] engine/pose_estimator.py
+- [ ] engine/draw.py（更新）
+- [ ] test_pose.py（验证用）
 
 ---
 
@@ -249,10 +249,10 @@ def is_fallen(keypoints, frame_h):
 - 运行测试脚本，PC 扬声器播放告警音
 
 ### 产出物
-- [x] alarms/alarm1.mp3
-- [x] alarms/alarm2.mp3
-- [x] engine/alarm.py
-- [x] test_alarm.py（验证用）
+- [ ] alarms/alarm1.mp3
+- [ ] alarms/alarm2.mp3
+- [ ] engine/alarm.py
+- [ ] test_alarm.py（验证用）
 
 ---
 
@@ -297,12 +297,12 @@ def is_fallen(keypoints, frame_h):
 - 浏览器控制台连接 `ws://localhost:8000/ws/stats` — 收到 JSON 统计
 
 ### 产出物
-- [x] server/state.py
-- [x] server/stream.py
-- [x] server/ws.py
-- [x] server/app.py
-- [x] engine/pipeline.py
-- [x] main.py
+- [ ] server/state.py
+- [ ] server/stream.py
+- [ ] server/ws.py
+- [ ] server/app.py
+- [ ] engine/pipeline.py
+- [ ] main.py
 
 ---
 
@@ -380,11 +380,11 @@ export default defineConfig({
 - 画面正常显示、统计数据实时更新、告警态正确切换
 
 ### 产出物
-- [x] web/src/stores/monitor.js
-- [x] web/src/composables/useWebSocket.js
-- [x] web/src/components/* （全部组件）
-- [x] web/src/App.vue
-- [x] web/vite.config.js
+- [ ] web/src/stores/monitor.js
+- [ ] web/src/composables/useWebSocket.js
+- [ ] web/src/components/* （全部组件）
+- [ ] web/src/App.vue
+- [ ] web/vite.config.js
 
 ---
 
@@ -418,9 +418,9 @@ export default defineConfig({
   - 未穿反光衣 → 红色框 "NO-VEST" + 告警音 1 播放
 
 ### 产出物
-- [x] models/helmet_vest.pt（队友交付）
-- [x] config.py（已更新）
-- [x] 正常工作的安全装备检测
+- [ ] models/helmet_vest.pt（队友交付）
+- [ ] config.py（已更新）
+- [ ] 正常工作的安全装备检测
 
 ---
 
@@ -456,8 +456,8 @@ export default defineConfig({
 - **预期**: 无内存泄漏、FPS 稳定、无明显卡顿
 
 ### 产出物
-- [x] 测试通过记录
-- [x] 已知问题列表（如有）
+- [ ] 测试通过记录
+- [ ] 已知问题列表（如有）
 
 ---
 
