@@ -130,7 +130,32 @@
 | 摔倒示例代码仍是旧版单条件 | IMPLEMENTATION_PLAN.md | 替换为按 §4.4 接口实现的文字描述 |
 | 阶段8 类别名+验证项仍是旧类 | IMPLEMENTATION_PLAN.md | 方案A优先，区分显示标签/内部类别 |
 | 检测框颜色表类别名 | FRONTEND_GUIDELINES.md | 内部类别改为 person_*，标签保留 HELMET |
-| FPS 示例 24 + 流程 "no-helmet" | APP_FLOW.md | FPS→12，类别→person_no_helmet |
+| FPS 示例 24 + 流程类别名 | APP_FLOW.md | FPS→12，类别名同步 |
+
+#### 接下来做什么
+- 阶段 1: 环境搭建
+
+---
+
+### 2026-07-13 — 规范文档四次审查修复 (v1.4)
+
+#### 审查来源
+第四次审查，指出方案 A（person_* 属性框）与实际队友交付（装备级检测框）不一致，统计会产生重复计数。
+
+#### 实际模型输出（已与队友确认）
+队友标注了 4 个装备类：`helmet`/`no-helmet`/`vest`/`no-vest`。同一人可能产生多个装备框。
+
+#### 修复内容
+
+| 问题 | 涉及文件 | 修复 |
+|------|---------|------|
+| F2 方案 A 的 person_* 属性框假设不成立 | PRD.md | 改为实际装备框模型，新增统计去重规则表（总人数→姿态模型，违规人数→装备框+人体框IoU匹配） |
+| CLASS_NAMES 与队友实际输出不一致 | BACKEND_STRUCTURE.md | 恢复为 helmet/no-helmet/vest/no-vest，新增 IOU_MATCH_THRESHOLD=0.3 |
+| Detection 类注释 | BACKEND_STRUCTURE.md | 同步为装备框类别名 |
+| 检测框颜色表 | FRONTEND_GUIDELINES.md | 改回装备级类别名 |
+| 阶段8 模型前提条件 | IMPLEMENTATION_PLAN.md | 改为实际装备框交付物，新增 matching.py 去重模块 |
+| 阶段8 验证项缺少去重测试 | IMPLEMENTATION_PLAN.md | 新增组合场景验证（一人多框→不重复计数） |
+| 流程中残余类别名 | APP_FLOW.md | "no-helmet 装备框"/"no-helmet 检测框" |
 
 #### 接下来做什么
 - 阶段 1: 环境搭建
