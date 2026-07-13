@@ -225,7 +225,7 @@ Content-Type: image/jpeg
     "no_vest": 1,
     "fall": false,
     "camera_status": "connected",
-    "fps": 24.5,
+    "fps": 12.0,
     "timestamp": "2026-07-13T14:30:25.123456"
   }
 }

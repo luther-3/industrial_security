@@ -190,6 +190,23 @@
 
 ---
 
+### 2026-07-13 — v2.0 残余引用修复
+
+#### 修复内容
+
+| 问题 | 涉及文件 | 修复 |
+|------|---------|------|
+| 假设节仍未更新为组合类模型 | PRD.md line 196 | 改为互斥组合类，移除 IoU 去重描述 |
+| 流程中仍写 "no-helmet" 装备框 | APP_FLOW.md line 152 | 改为 person_no_helmet_vest / person_no_helmet_no_vest |
+| JSON 示例字段名不一致 (total vs total_persons) | APP_FLOW.md line 175 | 统一为 total_persons |
+| 阶段 9 违规预期仍写红色框 | IMPLEMENTATION_PLAN.md line 435 | 改为单项橙色/双项红色 |
+| 示例 FPS 值 24.5 与目标 8-15 不一致 | BACKEND_STRUCTURE.md ×2 + APP_FLOW.md ×1 | 改为 12.0 |
+
+#### 接下来做什么
+- 阶段 1: 环境搭建
+
+---
+
 ## 阻塞问题
 
 | 编号 | 问题 | 影响阶段 | 状态 |

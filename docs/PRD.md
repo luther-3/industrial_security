@@ -193,7 +193,7 @@
 
 ### 5.2 假设
 - 摄像头已正确配置并推流（黑盒可用）
-- 队友交付的模型文件为 Ultralytics YOLO 标准 `.pt` 格式，输出 4 个装备级类别：`helmet`, `no-helmet`, `vest`, `no-vest`。同一人可能产生多个装备框，软件端通过姿态模型人体框 IoU 匹配去重（见 §F2 统计去重规则）
+- 队友交付的模型文件为 Ultralytics YOLO 标准 `.pt` 格式，输出 4 个互斥组合类（人体级，每人一个框）：`person_helmet_vest`, `person_helmet_no_vest`, `person_no_helmet_vest`, `person_no_helmet_no_vest`。每个框 = 一个人，无需去重
 - 画面中同时出现的人数 ≤ 20 人
 - 室内/半室内演示环境，光照条件基本稳定
 
