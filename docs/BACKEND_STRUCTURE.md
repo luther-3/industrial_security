@@ -207,8 +207,8 @@ Content-Type: image/jpeg
 ```
 
 - **实现**: FastAPI `StreamingResponse` + 生成器函数从 `SharedState` 读取最新 JPEG
-- **帧率**: 由推理线程决定，约 15-30 FPS
-- **空闲时**: 如果没有新帧，等待最多 50ms 后返回当前帧或继续等待
+- **帧率**: 由推理线程决定，约 8-15 FPS（CPU 双模型）
+- **空闲时**: 如果没有新帧，等待最多 100ms 后返回当前帧或继续等待
 
 ### 3.3 `WS /ws/stats` — WebSocket 统计推送
 
@@ -231,7 +231,7 @@ Content-Type: image/jpeg
 }
 ```
 
-- **推送频率**: 每次推理线程更新统计后立即推送
+- **推送频率**: 由 `server/ws.py` 定时器驱动，每 0.1-0.2 秒（5-10 Hz）从 SharedState 读取最新统计并广播，而非推理线程逐帧推送
 - **连接管理**: 维护已连接客户端集合，断开时自动移除
 
 ### 3.4 `GET /api/health` — 健康检查
@@ -270,8 +270,22 @@ POSE_MODEL_PATH = "yolov8n-pose.pt"                    # 姿态模型（自动�
 DETECTION_CONFIDENCE = 0.5     # 检测置信度阈值
 POSE_CONFIDENCE = 0.5           # 姿态关键点置信度阈值
 
-# 摔倒判断
-FALL_TORSO_RATIO = 0.25         # 躯干高度/身高 < 此值 → 摔倒（见 PRD）
+# 摔倒判断（多条件 AND，见 PRD.md §F3）
+FALL_TORSO_RATIO = 0.25             # 躯干高度(肩-髋) / 身体高度(肩-踝) < 此值
+FALL_BBOX_RATIO = 1.2               # bbox_width / bbox_height > 此值（摔倒时宽>高）
+POSE_REQUIRED_KEYPOINT_CONF = 0.5   # 肩、髋、踝 6 个关键点置信度 ≥ 此值
+FALL_TRIGGER_FRAMES = 3             # 连续 N 帧满足条件 → 触发摔倒告警
+FALL_CLEAR_FRAMES = 5               # 连续 N 帧不满足 → 解除摔倒告警
+
+# 安全违规告警状态机
+VIOLATION_TRIGGER_FRAMES = 3        # 连续 N 帧检测到违规 → 触发告警
+VIOLATION_CLEAR_FRAMES = 5          # 连续 N 帧违规消失 → 解除告警
+
+# 统计推送
+STATS_PUSH_INTERVAL = 0.15          # WebSocket 统计推送间隔（秒），即约 6-7 Hz
+
+# JPEG 编码
+JPEG_QUALITY = 70                   # MJPEG 推流 JPEG 质量 (0-100)
 
 # 告警音频
 ALARM1_PATH = "alarms/alarm1.mp3"   # 安全违规告警
@@ -282,12 +296,13 @@ ALARM_VOLUME = 0.8                   # 音量 (0.0 - 1.0)
 HOST = "0.0.0.0"
 PORT = 8000
 
-# 检测类别映射（队友模型的类别 ID）
+# 检测类别映射（方案 A：人体框带属性，见 PRD.md §F2 模型输出契约）
+# 如果队友交付方案 B/C（装备框），此映射需调整
 CLASS_NAMES = {
-    0: "helmet",
-    1: "no-helmet",
-    2: "vest",
-    3: "no-vest",
+    0: "person_helmet",
+    1: "person_no_helmet",
+    2: "person_vest",
+    3: "person_no_vest",
 }
 ```
 
@@ -358,10 +373,13 @@ class PoseResult:
     keypoints: list[tuple[float, float, float]]   # 17 个 (x, y, conf)
     is_fallen: bool                                # 是否摔倒
 
-def is_fallen(keypoints: list, frame_h: int) -> bool:
+def is_fallen(keypoints: list, bbox: tuple, frame_h: int) -> bool:
     """
-    摔倒判断核心逻辑
-    基于躯干高度 / 身体高度之比
+    摔倒判断核心逻辑（单帧，多条件 AND，见 PRD.md §F3）
+    - 躯干高度 / 身体高度 < FALL_TORSO_RATIO
+    - bbox 宽高比 > FALL_BBOX_RATIO
+    - 肩、髋、踝 6 关键点置信度 ≥ POSE_REQUIRED_KEYPOINT_CONF
+    时序确认（触发 FALL_TRIGGER_FRAMES / 解除 FALL_CLEAR_FRAMES）由调用方 Pipeline 维护
     """
 ```
 
@@ -445,8 +463,8 @@ class Pipeline:
             # 6. 绘图
             annotated = annotate_frame(frame, detections, poses, stats)
 
-            # 7. 编码 JPEG
-            _, jpeg = cv2.imencode(".jpg", annotated, [cv2.IMWRITE_JPEG_QUALITY, 80])
+            # 7. 编码 JPEG（质量 70，平衡清晰度与带宽，见 PRD.md §4.1）
+            _, jpeg = cv2.imencode(".jpg", annotated, [cv2.IMWRITE_JPEG_QUALITY, JPEG_QUALITY])
 
             # 8. 更新共享状态
             self.state.update_frame(annotated, jpeg.tobytes())

@@ -95,6 +95,27 @@
 
 ---
 
+### 2026-07-13 — 规范文档二次审查修复 (v1.2)
+
+#### 审查来源
+另一个 agent 对 v1.1 进行交叉审查，发现 PRD 与 BACKEND_STRUCTURE/APP_FLOW 之间存在不一致。
+
+#### 修复内容
+
+| 问题 | 严重程度 | 修复结果 |
+|------|---------|---------|
+| CLASS_NAMES 仍写旧四类，与方案 A 的 person_* 矛盾 | 🔴 高 | PRD 假设 + BACKEND CLASS_NAMES 统一为 `person_helmet`/`person_no_helmet`/`person_vest`/`person_no_vest`，旧四类标注为兼容方案 |
+| BACKEND MJPEG 帧率仍写 15-30 FPS | 🟡 中 | 改为 8-15 FPS，空闲等待从 50ms 改为 100ms |
+| BACKEND WebSocket 仍写"推理线程每帧推送" | 🟡 中 | 改为由 server/ws.py 定时器驱动，5-10 Hz |
+| BACKEND 摔倒配置仍只有 FALL_TORSO_RATIO | 🟡 中 | 新增 FALL_BBOX_RATIO/TRIGGER_FRAMES/CLEAR_FRAMES/POSE_CONF + STATS_PUSH_INTERVAL + JPEG_QUALITY 共 8 个配置项 |
+| BACKEND JPEG 质量 80 vs PRD 60-70 | 🟢 低 | 统一为 JPEG_QUALITY=70 |
+| APP_FLOW 摔倒流程缺少迟滞 | 🟡 中 | 加入 3 帧触发/5 帧解除状态机描述，与安全违规流程一致 |
+
+#### 接下来做什么
+- 阶段 1: 环境搭建
+
+---
+
 ## 阻塞问题
 
 | 编号 | 问题 | 影响阶段 | 状态 |

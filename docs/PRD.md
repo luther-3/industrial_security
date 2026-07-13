@@ -191,7 +191,7 @@
 ### 5.2 假设
 - 摄像头已正确配置并推流（黑盒可用）
 - 队友交付的模型文件为 Ultralytics YOLO 标准 `.pt` 格式
-- 模型类别名为 `helmet`, `no-helmet`, `vest`, `no-vest`
+- 模型类别名为 `person_helmet`, `person_no_helmet`, `person_vest`, `person_no_vest`（方案 A，人体框带属性）；如队友只能交付 `helmet`/`no-helmet`/`vest`/`no-vest` 装备框，则为方案 B/C，需额外人-装备匹配逻辑
 - 画面中同时出现的人数 ≤ 20 人
 - 室内/半室内演示环境，光照条件基本稳定
 
