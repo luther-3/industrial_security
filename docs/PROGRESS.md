@@ -2,7 +2,7 @@
 
 > **最后更新**: 2026-07-13
 >
-> **当前阶段**: 规范文档编写完成，准备开始阶段 1
+> **当前阶段**: 阶段 1 已完成，准备阶段 2
 
 ---
 
@@ -10,7 +10,7 @@
 
 | 阶段 | 状态 | 开始时间 | 完成时间 |
 |------|------|---------|---------|
-| 阶段 1: 环境搭建 | ⬜ 未开始 | — | — |
+| 阶段 1: 环境搭建 | ✅ 已完成 | 2026-07-13 | 2026-07-13 |
 | 阶段 2: 摄像头连通 | ⬜ 未开始 | — | — |
 | 阶段 3: 检测器骨架 | ⬜ 未开始 | — | — |
 | 阶段 4: 姿态+摔倒 | ⬜ 未开始 | — | — |
@@ -26,23 +26,31 @@
 
 ## 阶段详情
 
-### 阶段 1: 环境搭建 ⬜
+### 阶段 1: 环境搭建 ✅
 
 **目标**: 创建项目骨架，安装所有依赖，初始化 Git，确认环境可用。
 
 #### 已完成
+- [x] 创建完整项目目录结构（engine/, server/, web/, models/, alarms/, data/）
+- [x] Python package __init__.py（engine/ + server/）
+- [x] 安装 pygame 2.6.1（yolo26_env 唯一缺失的依赖）
+- [x] 初始化 Git 仓库 + .gitignore
+- [x] 创建 Vue 3 + Vite 项目骨架（npm create vite@latest）
+- [x] 安装前端依赖：element-plus, pinia, @element-plus/icons-vue
+- [x] 配置 vite.config.js 代理（/stream → localhost:8000, /ws, /api）
+- [x] 验证全部 9 个 Python 依赖 import 正常
+- [x] Vite 9.1.1 + Node v24.15.0 确认可用
+
+#### 有效
+- 全部 Python 依赖在 yolo26_env 中可用：ultralytics 8.4.92 / opencv 4.12.0 / fastapi 0.139.0 / uvicorn 0.51.0 / pygame 2.6.1 / numpy 2.2.6 / websockets 16.1 / torch 2.13.0+cpu / torchvision 0.28.0+cpu
+- Vite dev server 可用，proxy 已配置
+- Git repo 就绪
+
+#### 坏了
 - 无
 
-#### 进行中
-- 无
-
-#### 待完成
-- [ ] 创建完整项目目录结构
-- [ ] 安装缺失依赖 (pygame)
-- [ ] 初始化 Git 仓库 + .gitignore
-- [ ] 创建 Vue 3 前端项目骨架
-- [ ] 验证所有关键 import 可用
-- [ ] 首次 Git 提交
+#### 接下来做什么
+- 阶段 2: 摄像头连通
 
 ---
 
