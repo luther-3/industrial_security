@@ -244,7 +244,7 @@ Content-Type: image/jpeg
   "camera_connected": true,
   "models_loaded": true,
   "uptime_seconds": 3600.5,
-  "fps": 24.5
+  "fps": 12.0
 }
 ```
 
