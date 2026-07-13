@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+*.egg
+
+# Conda 环境 (不提交)
+venv/
+env/
+
+# 模型文件 (太大，不提交；通过其他方式共享)
+models/*.pt
+!models/README.md
+
+# 告警音频 (不提交；本地准备)
+alarms/*.mp3
+alarms/*.wav
+
+# IDE
+.vscode/
+.idea/
+
+# 临时文件
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+
+# 前端
+web/node_modules/
+web/dist/
+
+# 数据
+data/*.db
