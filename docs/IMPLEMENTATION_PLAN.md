@@ -189,17 +189,11 @@ while True:
 - 首次运行自动下载 `yolov8n-pose.pt`
 
 #### 4.2 摔倒检测逻辑实现
-```python
-def is_fallen(keypoints, frame_h):
-    shoulder_y = (keypoints[5][1] + keypoints[6][1]) / 2
-    hip_y      = (keypoints[11][1] + keypoints[12][1]) / 2
-    ankle_y    = (keypoints[15][1] + keypoints[16][1]) / 2
-    torso_height = abs(hip_y - shoulder_y)
-    body_height  = abs(shoulder_y - ankle_y)
-    if body_height > 0 and torso_height / body_height < 0.25:
-        return True
-    return False
-```
+按 BACKEND_STRUCTURE.md §4.4 的接口规范实现 `is_fallen(keypoints, bbox, frame_h)`，包含：
+- 躯干高度比（见 PRD.md §F3 条件 1）
+- bbox 宽高比（条件 2）
+- 关键点置信度过滤（条件 3）
+- 时序确认（条件 4+5）由 Pipeline 调用方维护帧计数器
 
 #### 4.3 增强 draw.py
 - 在人体上绘制 17 个关键点（圆点）
@@ -395,7 +389,8 @@ export default defineConfig({
 
 ### 前提条件
 - 队友交付 `helmet_vest.pt`
-- 模型类别名为 `helmet`, `no-helmet`, `vest`, `no-vest`
+- 模型类别名优先为 `person_helmet`, `person_no_helmet`, `person_vest`, `person_no_vest`（方案 A）
+- 若队友只能交付装备框（方案 B/C），需额外实现人-装备匹配逻辑，工期需增加
 
 ### 步骤
 
@@ -407,15 +402,16 @@ export default defineConfig({
 - 移除 fallback 逻辑（或保留作为不存在时的降级）
 
 #### 8.3 更新 draw.py
-- 类别名对应颜色映射
-- 安全装备标签中文或英文
+- 根据 CLASS_NAMES 映射将 person_* 类别对应到显示标签和颜色
+- 显示标签保留 HELMET / NO-HELMET / VEST / NO-VEST
+- 内部类别名使用 person_helmet / person_no_helmet / person_vest / person_no_vest
 
 #### 8.4 验证
 - 运行系统，确认：
-  - 戴安全帽 → 绿色框 "HELMET"
-  - 未戴安全帽 → 红色框 "NO-HELMET" + 告警音 1 播放
-  - 穿反光衣 → 绿色框 "VEST"
-  - 未穿反光衣 → 红色框 "NO-VEST" + 告警音 1 播放
+  - 佩戴安全帽 → 绿色框 "HELMET"（内部类别 person_helmet）
+  - 未戴安全帽 → 红色框 "NO-HELMET"（内部类别 person_no_helmet）+ 告警音 1
+  - 穿反光衣 → 绿色框 "VEST"（内部类别 person_vest）
+  - 未穿反光衣 → 红色框 "NO-VEST"（内部类别 person_no_vest）+ 告警音 1
 
 ### 产出物
 - [ ] models/helmet_vest.pt（队友交付）

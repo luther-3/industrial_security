@@ -116,6 +116,27 @@
 
 ---
 
+### 2026-07-13 — 规范文档三次审查修复 (v1.3)
+
+#### 审查来源
+第三次交叉审查，聚焦前两轮遗漏的尾随引用（PRD 改完但其他文档的引用未同步）。
+
+#### 修复内容
+
+| 问题 | 涉及文件 | 修复 |
+|------|---------|------|
+| F2 主描述仍是旧四类 | PRD.md | 改为 person_*，显示标签保留 HELMET 等 |
+| Detection.class_name 注释仍是旧类名 | BACKEND_STRUCTURE.md | 改为 person_* |
+| 摔倒示例代码仍是旧版单条件 | IMPLEMENTATION_PLAN.md | 替换为按 §4.4 接口实现的文字描述 |
+| 阶段8 类别名+验证项仍是旧类 | IMPLEMENTATION_PLAN.md | 方案A优先，区分显示标签/内部类别 |
+| 检测框颜色表类别名 | FRONTEND_GUIDELINES.md | 内部类别改为 person_*，标签保留 HELMET |
+| FPS 示例 24 + 流程 "no-helmet" | APP_FLOW.md | FPS→12，类别→person_no_helmet |
+
+#### 接下来做什么
+- 阶段 1: 环境搭建
+
+---
+
 ## 阻塞问题
 
 | 编号 | 问题 | 影响阶段 | 状态 |

@@ -348,7 +348,7 @@ class SafetyGearDetector:
 class Detection:
     """单个检测结果"""
     bbox: tuple[int, int, int, int]   # (x1, y1, x2, y2)
-    class_name: str                    # "helmet" | "no-helmet" | "vest" | "no-vest"
+    class_name: str                    # "person_helmet" | "person_no_helmet" | "person_vest" | "person_no_vest"
     confidence: float
 ```
 

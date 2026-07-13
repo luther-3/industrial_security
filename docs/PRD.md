@@ -34,14 +34,14 @@
 - PC 端通过 OpenCV `cv2.VideoCapture(MJPEG_URL)` 拉流
 
 #### F2: 安全装备检测
-- 实时检测画面中的以下四类目标：
-  - `helmet` — 佩戴安全帽
-  - `no-helmet` — 未佩戴安全帽
-  - `vest` — 穿着反光衣
-  - `no-vest` — 未穿反光衣
+- 实时检测画面中的人体安全装备状态（方案 A，人体框带属性）：
+  - `person_helmet` — 佩戴安全帽的人
+  - `person_no_helmet` — 未佩戴安全帽的人
+  - `person_vest` — 穿着反光衣的人
+  - `person_no_vest` — 未穿反光衣的人
 - 在视频画面上绘制检测边界框：
-  - 佩戴/穿着 → 绿色框
-  - 未佩戴/未穿着 → 红色框
+  - 合规（佩戴/穿着）→ 绿色框 + HELMET / VEST 标签
+  - 违规（未佩戴/未穿着）→ 红色框 + NO-HELMET / NO-VEST 标签
 - 使用队友训练的 YOLO 模型（`helmet_vest.pt`）
 - 在队友模型交付前，使用 YOLOv8n 官方预训练模型作为占位
 
