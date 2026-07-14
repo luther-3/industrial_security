@@ -107,26 +107,31 @@ PORT = 8000
 # 检测类别映射
 # ============================================================
 
-# 队友交付的模型输出（4 个互斥组合类，人体级，每人一个框）
+# ============================================================
+# 检测类别映射（队友交付的模型）
+# 模型输出 4 个互斥组合类，人体级，每人一个框
+# 类别 ID 顺序需与队友标注时的顺序一致，拿到模型后确认调整
+# ============================================================
+
 CLASS_NAMES = {
-    0: "person_helmet_vest",       # 戴安全帽 + 穿反光衣（两项合规）
-    1: "person_helmet_no_vest",    # 戴安全帽 + 未穿反光衣
-    2: "person_no_helmet_vest",    # 未戴安全帽 + 穿反光衣
-    3: "person_no_helmet_no_vest", # 未戴安全帽 + 未穿反光衣（两项违规）
+    0: "both",          # 戴安全帽 + 穿反光衣（两项合规）
+    1: "neither",       # 未戴安全帽 + 未穿反光衣（两项违规）
+    2: "only helmet",   # 戴安全帽 + 未穿反光衣
+    3: "only vest",     # 未戴安全帽 + 穿反光衣
 }
 
 # 类别 → 框颜色 (BGR)
 CLASS_COLORS = {
-    "person_helmet_vest":       (103, 194, 58),   # 绿色
-    "person_helmet_no_vest":    (60, 162, 230),    # 橙色
-    "person_no_helmet_vest":    (60, 162, 230),    # 橙色
-    "person_no_helmet_no_vest": (108, 108, 245),   # 红色
+    "both":         (103, 194, 58),   # 绿色 — 两项合规
+    "neither":      (108, 108, 245),   # 红色 — 两项违规
+    "only helmet":  (60, 162, 230),    # 橙色 — 缺反光衣
+    "only vest":    (60, 162, 230),    # 橙色 — 缺安全帽
 }
 
 # 类别 → 显示标签
 CLASS_LABELS = {
-    "person_helmet_vest":       "OK",
-    "person_helmet_no_vest":    "NO-VEST",
-    "person_no_helmet_vest":    "NO-HELMET",
-    "person_no_helmet_no_vest": "NO-HELMET+NO-VEST",
+    "both":         "OK",
+    "neither":      "NO-HELMET+NO-VEST",
+    "only helmet":  "NO-VEST",
+    "only vest":    "NO-HELMET",
 }
