@@ -1,9 +1,9 @@
 <template>
   <div class="stats-panel">
-    <StatCard label="Total Persons" :value="store.totalPersons" />
-    <StatCard label="No Helmet" :value="store.noHelmet" :isAlert="store.noHelmet > 0" />
-    <StatCard label="No Vest" :value="store.noVest" :isAlert="store.noVest > 0" />
-    <StatCard label="Fall" :value="store.fall ? 1 : 0" :isAlert="store.fall" />
+    <StatCard label="画面总人数" :value="store.totalPersons" />
+    <StatCard label="未戴安全帽" :value="store.noHelmet" :isAlert="store.noHelmet > 0" />
+    <StatCard label="未穿反光衣" :value="store.noVest" :isAlert="store.noVest > 0" />
+    <StatCard label="摔倒检测" :value="store.fall ? 1 : 0" :isAlert="store.fall" />
     <SystemInfo
       :fps="store.fps"
       :cameraStatus="store.cameraStatus"

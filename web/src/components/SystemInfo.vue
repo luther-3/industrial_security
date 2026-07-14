@@ -1,16 +1,16 @@
 <template>
   <div class="system-info">
     <div class="info-row">
-      <span class="key">FPS</span>
+      <span class="key">帧率</span>
       <span class="val">{{ fps }}</span>
     </div>
     <div class="info-row">
-      <span class="key">Camera</span>
+      <span class="key">摄像头</span>
       <span :class="['dot', cameraStatus]"></span>
       <span class="val">{{ statusText }}</span>
     </div>
     <div class="info-row">
-      <span class="key">Updated</span>
+      <span class="key">更新时间</span>
       <span class="val time">{{ lastUpdate || '--' }}</span>
     </div>
   </div>
@@ -27,9 +27,9 @@ const props = defineProps({
 
 const statusText = computed(() => {
   switch (props.cameraStatus) {
-    case 'connected': return 'Connected'
-    case 'disconnected': return 'Disconnected'
-    default: return 'Connecting...'
+    case 'connected': return '已连接'
+    case 'disconnected': return '已断开'
+    default: return '连接中...'
   }
 })
 </script>

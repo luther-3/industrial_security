@@ -1,7 +1,7 @@
 <template>
   <Transition name="fade">
     <div v-if="visible" class="alert-overlay">
-      <span class="alert-text">FALL DETECTED</span>
+      <span class="alert-text">检测到摔倒</span>
     </div>
   </Transition>
 </template>

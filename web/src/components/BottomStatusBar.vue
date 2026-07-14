@@ -1,14 +1,22 @@
 <template>
   <div class="bottom-bar">
-    <span>Camera: {{ store.cameraStatus }}</span>
-    <span>FPS: {{ store.fps }}</span>
-    <span class="muted">Industrial Security Monitor v1.0</span>
+    <span>摄像头: {{ statusText }}</span>
+    <span>帧率: {{ store.fps }}</span>
+    <span class="muted">工业安防监测系统 v1.0</span>
   </div>
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useMonitorStore } from '../stores/monitor'
 const store = useMonitorStore()
+const statusText = computed(() => {
+  switch (store.cameraStatus) {
+    case 'connected': return '已连接'
+    case 'disconnected': return '已断开'
+    default: return '连接中...'
+  }
+})
 </script>
 
 <style scoped>

@@ -2,11 +2,11 @@
   <div class="top-nav">
     <div class="left">
       <span class="icon">&#9673;</span>
-      <span class="title">Industrial Security Monitor</span>
+      <span class="title">工业安防监测系统</span>
     </div>
     <div class="right">
       <span :class="['dot', store.systemStatus]"></span>
-      <span class="status-text">{{ store.systemStatus === 'alarming' ? 'ALERT' : 'Running' }}</span>
+      <span class="status-text">{{ store.systemStatus === 'alarming' ? '告警中' : '运行中' }}</span>
     </div>
   </div>
 </template>
