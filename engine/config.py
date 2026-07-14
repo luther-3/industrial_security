@@ -22,7 +22,7 @@ FRAME_HEIGHT = 480
 # ============================================================
 
 # 队友训练的安全装备检测模型（4 个互斥组合类）
-DETECTION_MODEL_PATH = "models/helmet_vest.pt"
+DETECTION_MODEL_PATH = "models/best.pt"
 
 # 占位模型：队友模型未交付时使用 YOLOv8n COCO 预训练
 FALLBACK_MODEL_PATH = "yolov8n.pt"
@@ -114,10 +114,10 @@ PORT = 8000
 # ============================================================
 
 CLASS_NAMES = {
-    0: "both",          # 戴安全帽 + 穿反光衣（两项合规）
-    1: "neither",       # 未戴安全帽 + 未穿反光衣（两项违规）
-    2: "only helmet",   # 戴安全帽 + 未穿反光衣
-    3: "only vest",     # 未戴安全帽 + 穿反光衣
+    0: "only helmet",   # 戴安全帽 + 未穿反光衣
+    1: "only vest",     # 未戴安全帽 + 穿反光衣
+    2: "both",          # 戴安全帽 + 穿反光衣（两项合规）
+    3: "neither",       # 未戴安全帽 + 未穿反光衣（两项违规）
 }
 
 # 类别 → 框颜色 (BGR)
