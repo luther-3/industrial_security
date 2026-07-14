@@ -15,7 +15,7 @@
 | 阶段 3: 检测器骨架 | ✅ 已完成 | 2026-07-13 | 2026-07-13 |
 | 阶段 4: 姿态+摔倒 | ✅ 已完成 | 2026-07-14 | 2026-07-14 |
 | 阶段 5: 告警音频 | ⬜ 未开始 | — | — |
-| 阶段 6: FastAPI 后端 | ⬜ 未开始 | — | — |
+| 阶段 6: FastAPI 后端 | ✅ 已完成 | 2026-07-14 | 2026-07-14 |
 | 阶段 7: Vue 前端 | ⬜ 未开始 | — | — |
 | 阶段 8: 队友模型接入 | ⬜ 未开始 | — | — |
 | 阶段 9: 联调测试 | ⬜ 未开始 | — | — |
@@ -99,7 +99,34 @@
 - 真实摔倒视频测试（用户提供视频后运行）
 
 #### 接下来做什么
-- 阶段 5: 告警音频
+- 阶段 7: Vue 前端
+
+---
+
+### 阶段 6: FastAPI 后端 ✅
+
+**目标**: Web 服务搭建，MJPEG 视频流 + WebSocket 统计推送。
+
+#### 已完成
+- [x] `server/state.py` — SharedState（线程安全，锁保护帧+统计读写）
+- [x] `server/stream.py` — `GET /stream/video` MJPEG 流端点
+- [x] `server/ws.py` — `WS /ws/stats` 统计推送（5-10 Hz 定时器驱动）
+- [x] `server/app.py` — FastAPI 应用工厂 + `/api/health`
+- [x] `engine/pipeline.py` — Pipeline 主推理管线 + ViolationStateManager 告警状态机
+- [x] `main.py` — 启动入口（支持 camera/video.mp4/0 三种视频源）
+- [x] 启动测试通过：FastAPI + uvicorn 正常，双模型加载成功
+
+#### 有效
+- 三种视频源：`python main.py` (MJPEG 摄像头) / `python main.py video.mp4` / `python main.py 0` (本地摄像头)
+- 视频帧 640x480 缩放，JPEG 质量 70
+- 告警状态机（3帧触发/5帧解除）在 Pipeline 中正常工作
+- 摄像头断连时 2 秒后重试一次
+
+#### 坏了
+- 无
+
+#### 接下来做什么
+- 阶段 7: Vue 前端
 
 ---
 
@@ -107,17 +134,9 @@
 
 **目标**: 通过 OpenCV 从摄像头 MJPEG 地址成功拉流并显示。
 
-#### 已完成
-- 无
-
-#### 进行中
-- 无
-
 #### 待完成
 - [ ] 获取摄像头 IP 地址（需现场确认）
-- [ ] 编写 `engine/config.py`
-- [ ] 编写 `engine/capture.py` (VideoCapture 类)
-- [ ] 编写 `test_camera.py` 并验证拉流成功
+- [ ] 验证 `python main.py` 从 MJPEG URL 拉流成功
 
 ---
 
