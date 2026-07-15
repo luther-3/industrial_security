@@ -139,3 +139,6 @@ CLASS_LABELS = {
 # 违规类别集合（用于装备→人体 IoU 匹配统计）
 NO_HELMET_CLASSES = {"no_helmet", "none"}
 NO_VEST_CLASSES = {"none"}
+
+# 画面显示的类别（其他11类不画框，减少视觉干扰）
+DISPLAY_CLASSES = {"helmet", "no_helmet", "vest", "Person"}

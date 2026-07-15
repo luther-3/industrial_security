@@ -142,8 +142,10 @@ class Pipeline:
             stats["fps"] = round(fps, 1)
             stats["timestamp"] = datetime.now().isoformat()
 
-            # ---- draw ----
-            annotated = annotate_frame(frame, detections, poses, stats)
+            # ---- draw (filter to display-only classes) ----
+            from engine.config import DISPLAY_CLASSES
+            display_dets = [d for d in detections if d.class_name in DISPLAY_CLASSES]
+            annotated = annotate_frame(frame, display_dets, poses, stats)
 
             # ---- encode JPEG ----
             _, jpeg = cv2.imencode(".jpg", annotated, [cv2.IMWRITE_JPEG_QUALITY, JPEG_QUALITY])
