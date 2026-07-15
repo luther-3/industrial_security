@@ -17,6 +17,7 @@ from engine.config import (
 from engine.detector import SafetyGearDetector
 from engine.pose_estimator import PoseEstimator, FallStateManager
 from engine.alarm import create_alarm_manager, AlarmManager
+from engine.tts import TTSManager
 from engine.draw import annotate_frame
 from server.state import SharedState
 
@@ -67,6 +68,7 @@ class Pipeline:
         self.fall_manager = FallStateManager()
         self.violation_manager = ViolationStateManager()
         self.alarm: AlarmManager | None = None
+        self.tts: TTSManager | None = None
 
     def setup(self):
         """Initialize all modules. Call once before run()."""
@@ -75,6 +77,7 @@ class Pipeline:
         self.detector = SafetyGearDetector()
         self.pose_estimator = PoseEstimator()
         self.alarm = create_alarm_manager()
+        self.tts = TTSManager()
 
         print(f"[PIPELINE] Detector model: {self.detector.model_path}")
         print(f"[PIPELINE] Pose model: {self.pose_estimator.model_path}")
@@ -121,19 +124,27 @@ class Pipeline:
             else:
                 stats = self._compute_gear_stats(poses, detections)
 
-            # ---- alarm evaluation ----
+            # ---- alarm + TTS evaluation ----
             has_violation = (stats["no_helmet"] > 0 or stats["no_vest"] > 0)
             violation_active = self.violation_manager.update(has_violation)
 
-            if violation_active:
-                self.alarm.play("alarm1", loop=True)
-            else:
-                self.alarm.stop("alarm1")
-
             if fall_confirmed:
                 self.alarm.play("alarm2", loop=True)
-            else:
+                self.alarm.stop("alarm1")
+                self.tts.start("警告，有人员摔倒")
+            elif violation_active:
+                self.alarm.play("alarm1", loop=True)
                 self.alarm.stop("alarm2")
+                if stats["no_helmet"] > 0 and stats["no_vest"] > 0:
+                    self.tts.start("请注意，检测到有人员未佩戴安全帽和未穿反光衣")
+                elif stats["no_helmet"] > 0:
+                    self.tts.start("请注意，检测到有人员未佩戴安全帽")
+                else:
+                    self.tts.start("请注意，检测到有人员未穿反光衣")
+            else:
+                self.alarm.stop("alarm1")
+                self.alarm.stop("alarm2")
+                self.tts.stop()
 
             # ---- finalize stats ----
             fps = frame_count / max(time.time() - fps_timer, 0.001)
@@ -158,6 +169,7 @@ class Pipeline:
         cap.release()
         self.alarm.stop_all()
         self.alarm.quit()
+        self.tts.quit()
         print("[PIPELINE] Stopped.")
 
     def _compute_gear_stats(self, poses, detections):
