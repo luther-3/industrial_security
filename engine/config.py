@@ -45,13 +45,13 @@ POSE_CONFIDENCE = 0.5
 # ============================================================
 
 # 躯干高度(肩-髋) / 身体高度(肩-踝) < 此值
-FALL_TORSO_RATIO = 0.25
+FALL_TORSO_RATIO = 0.35
 
 # bbox_width / bbox_height > 此值（摔倒时宽 > 高）
-FALL_BBOX_RATIO = 1.2
+FALL_BBOX_RATIO = 0.8
 
 # 肩、髋、踝 6 个关键点置信度 ≥ 此值
-POSE_REQUIRED_KEYPOINT_CONF = 0.5
+POSE_REQUIRED_KEYPOINT_CONF = 0.4
 
 # 连续满足条件的帧数 → 触发摔倒告警
 FALL_TRIGGER_FRAMES = 3
