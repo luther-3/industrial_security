@@ -21,8 +21,8 @@ FRAME_HEIGHT = 480
 # 模型路径
 # ============================================================
 
-# 队友训练的安全装备检测模型（4 个互斥组合类）
-DETECTION_MODEL_PATH = "models/best.pt"
+# Construction-PPE 官方数据集训练模型（11类装备级检测）
+DETECTION_MODEL_PATH = "models/best (2).pt"
 
 # 占位模型：队友模型未交付时使用 YOLOv8n COCO 预训练
 FALLBACK_MODEL_PATH = "yolov8n.pt"
@@ -104,34 +104,38 @@ HOST = "0.0.0.0"
 PORT = 8000
 
 # ============================================================
-# 检测类别映射
-# ============================================================
-
-# ============================================================
-# 检测类别映射（队友交付的模型）
-# 模型输出 4 个互斥组合类，人体级，每人一个框
-# 类别 ID 顺序需与队友标注时的顺序一致，拿到模型后确认调整
+# 检测类别映射（Construction-PPE 官方数据集，11类装备级检测）
 # ============================================================
 
 CLASS_NAMES = {
-    0: "only helmet",   # 戴安全帽 + 未穿反光衣
-    1: "only vest",     # 未戴安全帽 + 穿反光衣
-    2: "both",          # 戴安全帽 + 穿反光衣（两项合规）
-    3: "neither",       # 未戴安全帽 + 未穿反光衣（两项违规）
+    0:  "helmet",
+    1:  "gloves",
+    2:  "vest",
+    3:  "boots",
+    4:  "goggles",
+    5:  "none",
+    6:  "Person",
+    7:  "no_helmet",
+    8:  "no_goggle",
+    9:  "no_gloves",
+    10: "no_boots",
 }
 
-# 类别 → 框颜色 (BGR)
 CLASS_COLORS = {
-    "both":         (103, 194, 58),   # 绿色 — 两项合规
-    "neither":      (108, 108, 245),   # 红色 — 两项违规
-    "only helmet":  (60, 162, 230),    # 橙色 — 缺反光衣
-    "only vest":    (60, 162, 230),    # 橙色 — 缺安全帽
+    "helmet":    (103, 194, 58), "vest":      (103, 194, 58),
+    "gloves":    (103, 194, 58), "boots":     (103, 194, 58),
+    "goggles":   (103, 194, 58),
+    "no_helmet": (108, 108, 245), "none":     (108, 108, 245),
+    "no_goggle": (108, 108, 245), "no_gloves": (108, 108, 245),
+    "no_boots":  (108, 108, 245),
+    "Person":    (200, 200, 200),
 }
 
-# 类别 → 显示标签
 CLASS_LABELS = {
-    "both":         "OK",
-    "neither":      "NO-HELMET+NO-VEST",
-    "only helmet":  "NO-VEST",
-    "only vest":    "NO-HELMET",
+    "helmet": "HELMET", "vest": "VEST", "no_helmet": "NO-HELMET",
+    "none": "NO-GEAR", "Person": "PERSON",
 }
+
+# 违规类别集合（用于装备→人体 IoU 匹配统计）
+NO_HELMET_CLASSES = {"no_helmet", "none"}
+NO_VEST_CLASSES = {"none"}

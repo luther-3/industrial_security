@@ -161,36 +161,33 @@ class Pipeline:
     def _compute_gear_stats(self, poses, detections):
         """
         Compute stats: total from pose model, gear violations from
-        matching equipment detections to pose person boxes via IoU.
+        matching equipment detections (11 PPE classes) to pose person boxes via IoU.
         """
+        from engine.config import NO_HELMET_CLASSES, NO_VEST_CLASSES
+
         total = len(poses)
         no_helmet = 0
         no_vest = 0
 
         for pose in poses:
             px1, py1, px2, py2 = pose.bbox
-            matched = None
-            best_iou = 0.0
+            matched_classes = set()
 
             for det in detections:
                 dx1, dy1, dx2, dy2 = det.bbox
-                # IoU
                 iw = max(0, min(px2, dx2) - max(px1, dx1))
                 ih = max(0, min(py2, dy2) - max(py1, dy1))
                 inter = iw * ih
                 pa = (px2 - px1) * (py2 - py1)
                 da = (dx2 - dx1) * (dy2 - dy1)
                 iou = inter / max(pa + da - inter, 1)
+                if iou > 0.2:
+                    matched_classes.add(det.class_name)
 
-                if iou > best_iou:
-                    best_iou = iou
-                    matched = det.class_name
-
-            if matched:
-                if matched in ("neither", "only vest"):
-                    no_helmet += 1
-                if matched in ("neither", "only helmet"):
-                    no_vest += 1
+            if matched_classes & NO_HELMET_CLASSES:
+                no_helmet += 1
+            if matched_classes & NO_VEST_CLASSES:
+                no_vest += 1
 
         return {"total_persons": total, "no_helmet": no_helmet, "no_vest": no_vest}
 

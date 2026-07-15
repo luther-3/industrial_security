@@ -140,17 +140,11 @@ class SafetyGearDetector:
                 "no_vest": 0,
             }
 
-        # 队友模型：4 个互斥组合类，直接按类别统计
-        # both=0, neither=1, only helmet=2, only vest=3
+        # PPE 装备级检测：按类别统计
+        from engine.config import NO_HELMET_CLASSES, NO_VEST_CLASSES
         total = len(detections)
-        no_helmet = sum(
-            1 for d in detections
-            if d.class_name in ("neither", "only vest")
-        )
-        no_vest = sum(
-            1 for d in detections
-            if d.class_name in ("neither", "only helmet")
-        )
+        no_helmet = sum(1 for d in detections if d.class_name in NO_HELMET_CLASSES)
+        no_vest = sum(1 for d in detections if d.class_name in NO_VEST_CLASSES)
 
         return {
             "total_persons": total,
