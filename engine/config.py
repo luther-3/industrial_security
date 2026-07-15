@@ -8,7 +8,7 @@
 # ============================================================
 
 # H618 智能摄像头 MJPEG 推流地址（需根据实际 IP 修改）
-MJPEG_URL = "http://192.168.1.100:8081/video_feed/"
+MJPEG_URL = "http://10.16.8.217:8080/video_feed/"
 
 # 断连重试间隔（秒）
 CAMERA_RECONNECT_INTERVAL = 3
@@ -35,7 +35,7 @@ POSE_MODEL_PATH = "yolov8n-pose.pt"
 # ============================================================
 
 # 安全装备检测置信度阈值
-DETECTION_CONFIDENCE = 0.5
+DETECTION_CONFIDENCE = 0.1
 
 # 姿态关键点置信度阈值
 POSE_CONFIDENCE = 0.5

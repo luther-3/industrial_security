@@ -109,15 +109,20 @@ class Pipeline:
 
             # ---- detection ----
             detections = self.detector.detect(frame)
-            det_stats = self.detector.compute_stats(detections)
 
             # ---- pose + fall ----
             poses = self.pose_estimator.estimate(frame)
             any_fall_single = any(p.is_fallen for p in poses)
             fall_confirmed = self.fall_manager.update(any_fall_single)
 
+            # ---- stats (pose persons + equipment matching) ----
+            if self.detector._is_fallback:
+                stats = self.detector.compute_stats(detections)
+            else:
+                stats = self._compute_gear_stats(poses, detections)
+
             # ---- alarm evaluation ----
-            has_violation = (det_stats["no_helmet"] > 0 or det_stats["no_vest"] > 0)
+            has_violation = (stats["no_helmet"] > 0 or stats["no_vest"] > 0)
             violation_active = self.violation_manager.update(has_violation)
 
             if violation_active:
@@ -130,17 +135,12 @@ class Pipeline:
             else:
                 self.alarm.stop("alarm2")
 
-            # ---- stats ----
+            # ---- finalize stats ----
             fps = frame_count / max(time.time() - fps_timer, 0.001)
-            stats = {
-                "total_persons": det_stats["total_persons"],
-                "no_helmet": det_stats["no_helmet"],
-                "no_vest": det_stats["no_vest"],
-                "fall": fall_confirmed,
-                "camera_status": "connected",
-                "fps": round(fps, 1),
-                "timestamp": datetime.now().isoformat(),
-            }
+            stats["fall"] = fall_confirmed
+            stats["camera_status"] = "connected"
+            stats["fps"] = round(fps, 1)
+            stats["timestamp"] = datetime.now().isoformat()
 
             # ---- draw ----
             annotated = annotate_frame(frame, detections, poses, stats)
@@ -157,6 +157,42 @@ class Pipeline:
         self.alarm.stop_all()
         self.alarm.quit()
         print("[PIPELINE] Stopped.")
+
+    def _compute_gear_stats(self, poses, detections):
+        """
+        Compute stats: total from pose model, gear violations from
+        matching equipment detections to pose person boxes via IoU.
+        """
+        total = len(poses)
+        no_helmet = 0
+        no_vest = 0
+
+        for pose in poses:
+            px1, py1, px2, py2 = pose.bbox
+            matched = None
+            best_iou = 0.0
+
+            for det in detections:
+                dx1, dy1, dx2, dy2 = det.bbox
+                # IoU
+                iw = max(0, min(px2, dx2) - max(px1, dx1))
+                ih = max(0, min(py2, dy2) - max(py1, dy1))
+                inter = iw * ih
+                pa = (px2 - px1) * (py2 - py1)
+                da = (dx2 - dx1) * (dy2 - dy1)
+                iou = inter / max(pa + da - inter, 1)
+
+                if iou > best_iou:
+                    best_iou = iou
+                    matched = det.class_name
+
+            if matched:
+                if matched in ("neither", "only vest"):
+                    no_helmet += 1
+                if matched in ("neither", "only helmet"):
+                    no_vest += 1
+
+        return {"total_persons": total, "no_helmet": no_helmet, "no_vest": no_vest}
 
     def stop(self):
         """Signal the main loop to stop."""
