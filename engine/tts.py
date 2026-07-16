@@ -28,7 +28,7 @@ class TTSManager:
         if self._engine is None:
             self._engine = pyttsx3.init()
             self._engine.setProperty("rate", 180)   # 语速
-            self._engine.setProperty("volume", 0.9)
+            self._engine.setProperty("volume", 1.0)
         return self._engine
 
     def start(self, text: str):
@@ -44,8 +44,8 @@ class TTSManager:
 
     def _loop(self):
         """Loop: speak → wait → speak → ... until stopped."""
-        # First delay: let alarm sound play 1-2s before voice starts
-        time.sleep(1.5)
+        # Short delay before voice
+        time.sleep(0.5)
 
         while self._running:
             try:
