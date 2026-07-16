@@ -5,7 +5,7 @@
 | 项目 | 版本/说明 |
 |------|----------|
 | 操作系统 | Windows 11 Home China 10.0.26200 |
-| Conda 环境 | `yolo26_env` (路径: `<conda-environment>`) |
+| Conda 环境 | `yolo26_env` |
 | Python | 3.12.13 |
 | Node.js | ≥ 18.x (LTS) |
 | 包管理器 (Python) | pip (conda 环境内置) |

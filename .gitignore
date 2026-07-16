@@ -33,3 +33,7 @@ web/dist/
 
 # 数据
 data/*.db
+
+# 训练产物
+runs/
+

@@ -14,13 +14,13 @@ goto end
 echo.
 echo Starting Network Camera mode...
 echo.
-%CONDA_PREFIX%\python.exe main.py
+python main.py
 goto end
 
 :usb
 echo.
 echo Starting USB Camera mode...
-%CONDA_PREFIX%\python.exe main.py 0
+python main.py 0
 goto end
 
 :end
