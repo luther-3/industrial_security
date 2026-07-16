@@ -8,7 +8,7 @@
 # ============================================================
 
 # H618 智能摄像头 MJPEG 推流地址（需根据实际 IP 修改）
-MJPEG_URL = "http://10.122.139.196:8081/video_feed"
+MJPEG_URL = "http://10.16.8.196:8081/video_feed"
 
 # 断连重试间隔（秒）
 CAMERA_RECONNECT_INTERVAL = 3
