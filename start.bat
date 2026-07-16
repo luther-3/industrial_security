@@ -1,29 +1,27 @@
 @echo off
-title 工业安防监测系统
-
 echo ===========================================
-echo   工业安防监测系统
+echo   Industrial Security Monitor
 echo ===========================================
-echo   [1] 网络摄像头 (10.122.139.196)
-echo   [2] USB摄像头
+echo   [1] Network Camera
+echo   [2] USB Camera
 echo ===========================================
+set /p mode="Enter 1 or 2: "
+if "%mode%"=="1" goto camera
+if "%mode%"=="2" goto usb
+goto end
 
-set /p mode="请输入 1 或 2: "
+:camera
+echo.
+echo Starting Network Camera mode...
+echo.
+%CONDA_PREFIX%\python.exe main.py
+goto end
 
-if "%mode%"=="1" (
-    echo.
-    echo === 启动网络摄像头模式 ===
-    echo 请确保摄像头上的 Flask 服务已启动!
-    echo.
-    call %CONDA_ROOT%\Scripts\activate.bat yolo26_env
-    python main.py
-)
+:usb
+echo.
+echo Starting USB Camera mode...
+%CONDA_PREFIX%\python.exe main.py 0
+goto end
 
-if "%mode%"=="2" (
-    echo.
-    echo === 启动 USB 摄像头模式 ===
-    call %CONDA_ROOT%\Scripts\activate.bat yolo26_env
-    python main.py 0
-)
-
+:end
 pause

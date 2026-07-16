@@ -218,6 +218,7 @@ class Pipeline:
 
         print(f"[PIPELINE] Opening source: {src}")
         cap = cv2.VideoCapture(src)
+        cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # minimize network latency
 
         if not cap.isOpened():
             print(f"[PIPELINE] Failed to open: {src}")
@@ -226,4 +227,5 @@ class Pipeline:
                 print("[PIPELINE] Retrying in 2s...")
                 time.sleep(2)
                 cap = cv2.VideoCapture(src)
+                cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)
         return cap
