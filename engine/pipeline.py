@@ -128,23 +128,35 @@ class Pipeline:
             has_violation = (stats["no_helmet"] > 0 or stats["no_vest"] > 0)
             violation_active = self.violation_manager.update(has_violation)
 
+            # Determine TTS message (only restart TTS if message actually changed)
+            tts_key = ""
+            if fall_confirmed:
+                tts_key = "fall"
+            elif violation_active:
+                tts_key = f"{1 if stats['no_helmet']>0 else 0}{1 if stats['no_vest']>0 else 0}"
+
+            if tts_key != getattr(self, "_last_tts_key", ""):
+                self._last_tts_key = tts_key
+                if tts_key == "fall":
+                    self.tts.start("警告，有人员摔倒")
+                elif tts_key == "11":
+                    self.tts.start("请注意，检测到有人员未佩戴安全帽和未穿反光衣")
+                elif tts_key == "10":
+                    self.tts.start("请注意，检测到有人员未佩戴安全帽")
+                elif tts_key == "01":
+                    self.tts.start("请注意，检测到有人员未穿反光衣")
+                else:
+                    self.tts.stop()
+
             if fall_confirmed:
                 self.alarm.play("alarm2", loop=True)
                 self.alarm.stop("alarm1")
-                self.tts.start("警告，有人员摔倒")
             elif violation_active:
                 self.alarm.play("alarm1", loop=True)
                 self.alarm.stop("alarm2")
-                if stats["no_helmet"] > 0 and stats["no_vest"] > 0:
-                    self.tts.start("请注意，检测到有人员未佩戴安全帽和未穿反光衣")
-                elif stats["no_helmet"] > 0:
-                    self.tts.start("请注意，检测到有人员未佩戴安全帽")
-                else:
-                    self.tts.start("请注意，检测到有人员未穿反光衣")
             else:
                 self.alarm.stop("alarm1")
                 self.alarm.stop("alarm2")
-                self.tts.stop()
 
             # ---- finalize stats ----
             fps = frame_count / max(time.time() - fps_timer, 0.001)
