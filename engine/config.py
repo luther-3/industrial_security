@@ -94,7 +94,7 @@ ALARM1_PATH = "alarms/alarm1.mp3"
 ALARM2_PATH = "alarms/alarm2.mp3"
 
 # 音量 (0.0 - 1.0)
-ALARM_VOLUME = 0.8
+ALARM_VOLUME = 0.3
 
 # ============================================================
 # 服务
