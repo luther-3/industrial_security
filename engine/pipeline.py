@@ -72,6 +72,11 @@ class Pipeline:
 
     def setup(self):
         """Initialize all modules. Call once before run()."""
+        if self.source == "camera" and not MJPEG_URL:
+            raise ValueError(
+                "网络摄像头未配置：请设置 INDUSTRIAL_SECURITY_MJPEG_URL "
+                "或在 config.local.json 中填写 mjpeg_url。"
+            )
         print("[PIPELINE] Initializing...")
 
         self.detector = SafetyGearDetector()
@@ -228,12 +233,13 @@ class Pipeline:
         else:
             src = self.source
 
-        print(f"[PIPELINE] Opening source: {src}")
+        source_label = "configured network camera" if self.source == "camera" else "selected video source"
+        print(f"[PIPELINE] Opening {source_label}")
         cap = cv2.VideoCapture(src)
         cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # minimize network latency
 
         if not cap.isOpened():
-            print(f"[PIPELINE] Failed to open: {src}")
+            print(f"[PIPELINE] Failed to open {source_label}")
             # Retry once after 2s for camera
             if self.source == "camera":
                 print("[PIPELINE] Retrying in 2s...")

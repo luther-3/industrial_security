@@ -258,7 +258,7 @@ Content-Type: image/jpeg
 # 全局配置常量
 
 # 摄像头
-MJPEG_URL = "http://192.168.1.100:8081/video_feed/"  # 需根据实际 IP 修改
+MJPEG_URL = load_mjpeg_url()  # 环境变量或 config.local.json；详见根目录 README
 CAMERA_RECONNECT_INTERVAL = 3  # 断连重试间隔（秒）
 
 # 模型路径

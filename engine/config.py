@@ -1,14 +1,49 @@
 """
 全局配置常量
-所有可调参数集中管理，硬编码配置。
+公共参数集中管理；设备地址由环境变量或本地配置提供。
 """
+import json
+import os
+from pathlib import Path
+from urllib.parse import urlsplit
+
+
+def load_mjpeg_url(config_path: Path | None = None) -> str:
+    """Read the private camera URL without putting its value in errors."""
+    value = os.environ.get("INDUSTRIAL_SECURITY_MJPEG_URL", "").strip()
+    if not value:
+        config_path = config_path or Path(__file__).resolve().parents[1] / "config.local.json"
+        try:
+            settings = json.loads(config_path.read_text(encoding="utf-8-sig"))
+        except FileNotFoundError:
+            return ""
+        except (OSError, ValueError):
+            raise ValueError("无法读取 config.local.json，请检查文件权限和 JSON 格式。") from None
+        if not isinstance(settings, dict):
+            raise ValueError("config.local.json 必须是 JSON 对象。")
+        value = settings.get("mjpeg_url", "")
+        if not isinstance(value, str):
+            raise ValueError("config.local.json 的 mjpeg_url 必须是字符串。")
+        value = value.strip()
+    if value:
+        try:
+            parsed = urlsplit(value)
+            valid = parsed.scheme in {"http", "https"} and bool(parsed.hostname)
+            # Reject malformed ports without echoing the private address.
+            parsed.port
+        except ValueError:
+            valid = False
+        if not valid:
+            raise ValueError("摄像头地址必须是有效的 HTTP 或 HTTPS URL。")
+    return value
 
 # ============================================================
 # 摄像头
 # ============================================================
 
-# H618 智能摄像头 MJPEG 推流地址（需根据实际 IP 修改）
-MJPEG_URL = "http://10.16.8.196:8081/video_feed"
+# 环境变量优先；config.local.json 不提交到 Git。
+# USB 摄像头和视频文件模式无需设置此值。
+MJPEG_URL = load_mjpeg_url()
 
 # 断连重试间隔（秒）
 CAMERA_RECONNECT_INTERVAL = 3

@@ -8,6 +8,7 @@ dist/
 # Conda 环境 (不提交)
 venv/
 env/
+.venv/
 
 # 模型文件 (太大，不提交；通过其他方式共享)
 *.pt
@@ -26,6 +27,12 @@ alarms/*.wav
 *.log
 .DS_Store
 Thumbs.db
+
+# 本地设备地址、凭据与配置
+config.local.json
+.env
+.env.*
+!.env.example
 
 # 前端
 web/node_modules/
